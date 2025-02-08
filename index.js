@@ -6,6 +6,8 @@ const { userRouter } = require("./routes/user");
 const { courseRouter } = require("./routes/course");
 const { adminRouter} = require("./routes/admin")
 
+mongoose.connect("mongodb+srv://jagdishsuthar4581:j8J8up7a0bI9R4uY@course-selling-app.dyqiw.mongodb.net/")
+
 app.use("/users" , userRouter);
 app.use("/course" , courseRouter)
 app.use("/admin" , adminRouter);
