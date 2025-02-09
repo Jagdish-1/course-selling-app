@@ -1,12 +1,12 @@
 const {Router} = require("express");
-const {courseModel , purchaseModel} = require("./db");
+const {courseModel , purchaseModel} = require("../db");
 const courseRouter = Router();
 
-app.get("/purchasedcourses" , function(req, res) {
+courseRouter.get("/purchasedcourses" , function(req, res) {
 
 })
 
-app.get("/all" , function(req, res) {
+courseRouter.get("/all" , function(req, res) {
 
 })
 
