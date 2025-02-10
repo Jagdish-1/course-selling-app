@@ -4,7 +4,7 @@ const { z } = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { adminModel, courseModel } = require("../db");
-const { secret, auth } = require("../authadmin");
+const { secret, auth } = require("../middelware/authadmin");
 const JWT_SECRET = secret;
 const adminRouter = Router();
 
@@ -142,6 +142,7 @@ adminRouter.post("/course", auth, async function (req, res) {
 
 })
 
+
 adminRouter.put("/course", auth, async function (req, res) {
     const courseUpdateSchema = z.object({
         title: z.string(),
@@ -162,10 +163,9 @@ adminRouter.put("/course", auth, async function (req, res) {
         if (schemaPassed.data.imageUrl) adminCourse.imageUrl = schemaPassed.data.imageUrl;
         try {
             console.log(adminCourse);
-            await courseModel.findByIdAndUpdate(
-                courseCreatedId,
+            await courseModel.updateOne(
+               {_id : courseCreatedId ,adminId :  adminId},
                 adminCourse,
-                { new: true }
             )
             return res.json({
                 msg: "course has updated"
@@ -173,7 +173,7 @@ adminRouter.put("/course", auth, async function (req, res) {
         }
         catch (err) {
             return res.json({
-                msg: " database has some error"
+                msg: " you cant update the course"
             })
         }
 
@@ -185,6 +185,7 @@ adminRouter.put("/course", auth, async function (req, res) {
     }
 
 })
+
 
 adminRouter.get("/bulk", auth, async function (req, res) {
     const adminId = req.body.adminId;

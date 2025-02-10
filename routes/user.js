@@ -4,7 +4,7 @@ const { z } = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { userModel } = require("../db");
-const { secret , auth } = require("../auth");
+const { secret , auth } = require("../middelware/auth");
 const JWT_SECRET = secret;
 const userRouter = Router();
 
