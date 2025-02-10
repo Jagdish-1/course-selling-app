@@ -112,7 +112,7 @@ adminRouter.post("/course", auth, async function (req, res) {
     const courseSchemaPassed = courseSchema.safeParse(req.body);
     if (courseSchemaPassed.success) {
         try {
-            await courseModel.create({
+            const courseCreated = await courseModel.create({
                 title: courseSchemaPassed.data.title,
                 description: courseSchemaPassed.data.description,
                 price: courseSchemaPassed.data.price,
@@ -120,7 +120,8 @@ adminRouter.post("/course", auth, async function (req, res) {
                 adminId: courseSchemaPassed.data.adminId
             })
             return res.json({
-                msg: "course has been uploaded"
+                msg: "course has been uploaded",
+                courseId: courseCreated._id
             })
         }
         catch (err) {
@@ -130,9 +131,9 @@ adminRouter.post("/course", auth, async function (req, res) {
             })
         }
     }
-    else{
+    else {
         return res.json({
-            msg : "Invalid format"
+            msg: "Invalid format"
         })
     }
     // const adminId = req.adminId;
@@ -141,12 +142,67 @@ adminRouter.post("/course", auth, async function (req, res) {
 
 })
 
-adminRouter.put("/course" , auth , async function(req, res) {
+adminRouter.put("/course", auth, async function (req, res) {
+    const courseUpdateSchema = z.object({
+        title: z.string(),
+        description: z.string(),
+        price: z.number(),
+        imageUrl: z.string(),
+        adminId: z.string()
+    }).partial();
+
+    const courseCreatedId = req.headers.courseid;
+    console.log(req.headers)
+    const schemaPassed = courseUpdateSchema.safeParse(req.body);
+    if (schemaPassed.success) {
+        let adminCourse = {};
+        if (schemaPassed.data.title) adminCourse.title = schemaPassed.data.title;
+        if (schemaPassed.data.description) adminCourse.description = schemaPassed.data.description;
+        if (schemaPassed.data.price) adminCourse.price = schemaPassed.data.price;
+        if (schemaPassed.data.imageUrl) adminCourse.imageUrl = schemaPassed.data.imageUrl;
+        try {
+            console.log(adminCourse);
+            await courseModel.findByIdAndUpdate(
+                courseCreatedId,
+                adminCourse,
+                { new: true }
+            )
+            return res.json({
+                msg: "course has updated"
+            })
+        }
+        catch (err) {
+            return res.json({
+                msg: " database has some error"
+            })
+        }
+
+    }
+    else {
+        return res.json({
+            msg: " input format invalid"
+        })
+    }
 
 })
 
-adminRouter.get("/bulk", auth, function (req, res) {
+adminRouter.get("/bulk", auth, async function (req, res) {
+    const adminId = req.body.adminId;
+    try {
+        const allCourseOfAdmin = await courseModel.find(
+            { adminId: adminId }
+        )
 
+        return res.json({
+            msg: "all courses",
+            courses: allCourseOfAdmin
+        })
+    }
+    catch (err) {
+        return res.json({
+            msg: "database error"
+        })
+    }
 })
 
 // i can also do the error handling
