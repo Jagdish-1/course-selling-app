@@ -14,8 +14,8 @@ userRouter.post("/signup", async function (req, res) {
     const reqSchema = z.object({
         email: z.string().email(),
         password: z.string(),
-        firstname: z.string(),
-        lastname: z.string()
+        firstName: z.string(),
+        lastName: z.string()
     })
 
     const reqAccepted = reqSchema.safeParse(req.body);
@@ -29,8 +29,8 @@ userRouter.post("/signup", async function (req, res) {
                 // here i can push direct also
                 email: reqAccepted.data.email,
                 password: hashPassword,
-                firstname: reqAccepted.data.firstname,
-                lastname: reqAccepted.data.lastname
+                firstName: reqAccepted.data.firstName,
+                lastName: reqAccepted.data.lastName
             });
             return res.json({
                 msg: "you are signed up"
@@ -67,7 +67,7 @@ userRouter.post("/login", async function (req, res) {
                 if (passwordMatchedOrNot) {
                     // now we are generating the token
                     const token = jwt.sign({
-                        id: user._id.toString()
+                        userId: user._id.toString()
                     }, JWT_SECRET)
 
                     return res.json({

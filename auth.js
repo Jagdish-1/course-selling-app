@@ -7,7 +7,7 @@ function auth(req, res, next) {
     const token = req.headers.token;
     try {
         const decodedToken = jwt.verify(token, JWT_SECRET);
-        req.id = decodedToken.id;
+        req.userId = decodedToken.userId;
         next();
     }
     catch (err) {
