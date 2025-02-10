@@ -1,24 +1,26 @@
 const { Router } = require("express");
+const express = require("express");
 const { z } = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { userModel } = require("../db");
-const { JWT_SECRET , auth } = require("../auth");
-const JWT_SECRET = JWT_SECRET;
+const { secret , auth } = require("../auth");
+const JWT_SECRET = secret;
 const userRouter = Router();
 
-userRouter.use(express.json());
+// userRouter.use(express.json());
 
 userRouter.post("/signup", async function (req, res) {
     const reqSchema = z.object({
         email: z.string().email(),
-        pasword: z.string(),
-        fname: z.string(),
-        lname: z.string()
+        password: z.string(),
+        firstname: z.string(),
+        lastname: z.string()
     })
 
     const reqAccepted = reqSchema.safeParse(req.body);
     if (reqAccepted.success) {
+        console.log(reqAccepted.data)
 
         const hashPassword = await bcrypt.hash(req.body.password, 2);
 
@@ -27,14 +29,15 @@ userRouter.post("/signup", async function (req, res) {
                 // here i can push direct also
                 email: reqAccepted.data.email,
                 password: hashPassword,
-                fname: reqAccepted.data.fname,
-                lname: reqAccepted.data.lname
+                firstname: reqAccepted.data.firstname,
+                lastname: reqAccepted.data.lastname
             });
             return res.json({
                 msg: "you are signed up"
             })
         }
         catch (err) {
+            console.log(err)
             return res.json({
                 msg: "database has some error"
             })
@@ -49,7 +52,7 @@ userRouter.post("/signup", async function (req, res) {
 userRouter.post("/login", async function (req, res) {
     const reqSchema = z.object({
         email: z.string().email(),
-        pasword: z.string()
+        password: z.string()
     })
 
     const reqMatched = reqSchema.safeParse(req.body);

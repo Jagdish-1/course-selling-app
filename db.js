@@ -33,9 +33,9 @@ const purchase = new Schema({
 })
 
 const userModel = mongoose.model("users" , user); 
-const adminModel = mongoose.model("admin" , admin); 
-const courseModel = mongoose.model("course" , course); 
-const purchaseModel = mongoose.model("purchase" , purchase);
+const adminModel = mongoose.model("admins" , admin); 
+const courseModel = mongoose.model("courses" , course); 
+const purchaseModel = mongoose.model("purchases" , purchase);
 
 
 module.exports = {
