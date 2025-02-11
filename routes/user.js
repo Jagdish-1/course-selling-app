@@ -3,8 +3,8 @@ const express = require("express");
 const { z } = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { userModel } = require("../db");
-const { secret , auth } = require("../middelware/auth");
+const { userModel, purchaseModel } = require("../db");
+const { secret, auth } = require("../middelware/auth");
 const JWT_SECRET = secret;
 const userRouter = Router();
 
@@ -101,8 +101,26 @@ userRouter.post("/login", async function (req, res) {
 
 
 // these are authenticated endpoints so first middleware verify
-userRouter.post("/purchase",auth, function (req, res) {
+userRouter.post("/purchase", auth, async function (req, res) {
+    const userId = req.body.userId;
+    const courseId = req.headers.courseid;
+    console.log("user id " + userId)
+    console.log("course id " + courseId)
+    try {
+        await purchaseModel.create({
+            courseId : courseId,
+            userId : userId
+        })
 
+        return res.json({
+            msg: "course purchased"
+        })
+    }
+    catch (err) {
+        return res.json({
+            msg: "purchase not working"
+        })
+    }
 })
 
 module.exports = {
