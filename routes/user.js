@@ -3,7 +3,7 @@ const express = require("express");
 const { z } = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { userModel, purchaseModel } = require("../db");
+const { userModel, purchaseModel} = require("../db");
 const { secret, auth } = require("../middelware/auth");
 const JWT_SECRET = secret;
 const userRouter = Router();
@@ -101,24 +101,21 @@ userRouter.post("/login", async function (req, res) {
 
 
 // these are authenticated endpoints so first middleware verify
-userRouter.post("/purchase", auth, async function (req, res) {
+userRouter.post("/purchases", auth, async function (req, res) {
     const userId = req.body.userId;
-    const courseId = req.headers.courseid;
-    console.log("user id " + userId)
-    console.log("course id " + courseId)
     try {
-        await purchaseModel.create({
-            courseId : courseId,
+        const allPurchased = await purchaseModel.find({
             userId : userId
         })
 
         return res.json({
-            msg: "course purchased"
+            msg : "all purchases course",
+            purchasedCourse : allPurchased
         })
     }
-    catch (err) {
+    catch(err) {
         return res.json({
-            msg: "purchase not working"
+            msg : "database error"
         })
     }
 })
